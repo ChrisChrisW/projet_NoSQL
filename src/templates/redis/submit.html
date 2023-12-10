@@ -1,0 +1,18 @@
+<div class="modal fade" id="submitRedisModal" tabindex="-1" role="dialog" aria-labelledby="submitRedisModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-success" id="submitRedisModalLabel">Submit to Redis</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="redisForm" action="{{ url_for('submit_redis') }}" method="POST">
+                    <button type="button" class="btn btn-success btn-block" onclick="addField()">Add Field</button>
+                    <button type="submit" name="submit_redis" class="btn btn-success btn-block">Submit to Redis</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

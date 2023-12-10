@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block title %}Editer le Posgres{% endblock %}
+{% block page_title %}Editer le Posgres{% endblock %}
+
+{% block content %}
+    <div class="card p-3 rounded shadow border-0" style="width: 25rem;">
+        <h1 class="text-center mb-4 text-secondary">Edit Item</h1>
+        
+        <form method="POST" action="{{ url_for('edit_postgres', item_id=item.id) }}">
+            <!-- Add fields based on your data model -->
+            <div class="form-group">
+                <label for="field1">Field 1:</label>
+                <input type="text" id="field1" name="field1" class="form-control" value="{{ item.field1 }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="field2">Field 2:</label>
+                <input type="text" id="field2" name="field2" class="form-control" value="{{ item.field2 }}" required>
+            </div>
+
+            <input type="hidden" name="_method" value="PUT">
+            <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+        </form>
+
+        <form method="POST" action="{{ url_for('delete_postgres', item_id=item.id) }}" onsubmit="return confirm('Are you sure you want to delete?');">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit" name="delete_postgres" class="btn btn-danger btn-block mt-3">Delete Item</button>
+        </form>
+    </div>
+{% endblock %}

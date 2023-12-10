@@ -1,0 +1,8 @@
+Flask==2.0.1                # Web framework for building web applications in Python
+Werkzeug==2.0.1             # General-purpose utility library for Flask
+pymongo==3.12.1             # Python driver for MongoDB, a NoSQL database
+redis==3.5.3                # Python client for Redis, an in-memory data store
+SQLAlchemy==1.4.22          # SQL toolkit and Object-Relational Mapping (ORM) for Python
+psycopg2-binary==2.9.1      # PostgreSQL adapter for Python
+neo4j==4.3.2                # Python driver for Neo4j, a graph database
+elasticsearch==7.15.0       # Python client for Elasticsearch, a search and analytics engine

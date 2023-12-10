@@ -1,0 +1,25 @@
+<div class="modal fade" id="submitNeo4jModal" tabindex="-1" role="dialog" aria-labelledby="submitNeo4jModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-secondary" id="submitNeo4jModalLabel">Submit to Neo4j</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('submit_neo4j') }}" method="POST">
+                    <div class="form-group">
+                        <label for="field1_postgres">Field 1:</label>
+                        <input type="text" id="field1_neo4j" name="field1" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="field2_postgres">Field 2:</label>
+                        <textarea id="field2_neo4j" name="field2" class="form-control" required></textarea>
+                    </div>
+                    <button type="submit" name="submit_neo4j" class="btn btn-info btn-block">Submit to Neo4j</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

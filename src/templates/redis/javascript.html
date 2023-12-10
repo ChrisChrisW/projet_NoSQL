@@ -1,0 +1,56 @@
+<script>
+    var fieldCounter = 0;
+
+    function addField() {
+        var form = document.getElementById("redisForm");
+        var counter = fieldCounter++;
+
+        var div = document.createElement("div");
+        div.className = "form-group";
+
+        var label = document.createElement("label");
+        label.innerHTML = "Field " + counter + ":";
+
+        var input = document.createElement("input");
+        input.type = "text";
+        input.name = counter;
+        input.className = "form-control";
+        input.required = true;
+
+        var inputGroup = document.createElement("div");
+        inputGroup.className = "d-flex";
+
+        inputGroup.appendChild(input);
+
+        var removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.className = "btn btn-danger btn-sm ml-2";
+        removeButton.innerHTML = "Remove";
+        removeButton.onclick = function() { removeField(div); };
+
+        inputGroup.appendChild(removeButton);
+
+        div.appendChild(label);
+        div.appendChild(inputGroup);
+
+        form.insertBefore(div, form.lastChild.previousSibling);
+    }
+
+    function removeField(field) {
+        var form = document.getElementById("redisForm");
+        form.removeChild(field);
+        updateFieldNames();
+    }
+
+    function updateFieldNames() {
+        var form = document.getElementById("redisForm");
+        var inputs = form.getElementsByTagName("input");
+
+        for (var i = 0; i < inputs.length; i++) {
+            var currentField = inputs[i];
+            if (currentField.type === "text") {
+                currentField.name = "field_" + i;
+            }
+        }
+    }
+</script>

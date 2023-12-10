@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Create Pokemon App</title>
+    <style>
+      .pokemon {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .pokemon img {
+        width: 100px;
+        height: 100px;
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Pokémon List</h1>
+    <div id="pokemon-list"></div>
+
+    <script>
+      async function fetchPokemons() {
+        const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=20');
+        const data = await response.json();
+        return data.results;
+      }
+
+      async function displayPokemons() {
+        const pokemonList = document.getElementById('pokemon-list');
+        const pokemons = await fetchPokemons();
+
+        pokemons.forEach(pokemon => {
+          const pokemonDiv = document.createElement('div');
+          pokemonDiv.classList.add('pokemon');
+
+          const pokemonImg = document.createElement('img');
+          pokemonImg.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.url.split('/')[6]}.png`;
+
+          const pokemonName = document.createElement('p');
+          pokemonName.textContent = pokemon.name;
+
+          pokemonDiv.appendChild(pokemonImg);
+          pokemonDiv.appendChild(pokemonName);
+          pokemonList.appendChild(pokemonDiv);
+        });
+      }
+
+      displayPokemons();
+    </script>
+  </body>
+</html>

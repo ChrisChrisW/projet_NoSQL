@@ -1,0 +1,31 @@
+<div class="card p-3 rounded shadow border-0 mb-3" style="width: 25rem; max-height: 400px;">
+    <h1 class="text-center mb-4 text-secondary">Data from Postgres</h1>
+    <div class="overflow-auto custom-list-group">
+        <ul class="list-group">
+            {% if postgres_data %}
+                {% for item in postgres_data %}
+                    <li class="list-group-item d-flex flex-column bg-light">
+                        <div class="mb-2">
+                            {{ item.field1 }} - {{ item.field2 }}
+                        </div>
+                        <div class="mt-auto text-center">
+                            <div class="btn-group" role="group" aria-label="Postgres actions">
+                                <form action="{{ url_for('edit_postgres', item_id=item.id) }}" method="POST">
+                                    <button type="submit" name="edit_postgres" class="btn btn-outline-primary btn-sm">Edit</button>
+                                </form>
+                                <form action="{{ url_for('delete_postgres', item_id=item.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete?');">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" name="delete_postgres" class="btn btn-outline-danger btn-sm ml-2">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class="mt-3">
+        <button type="button" class="btn btn-secondary btn-block" data-toggle="modal" data-target="#submitPostgresModal">Submit</button>
+    </div>
+</div>

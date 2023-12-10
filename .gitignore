@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+
+# Docker
+docker-compose.override.yml
+docker-compose.override.yml.override
+
+# IDE
+.vscode/
+.idea/
+
+# Environment variables
+.env
+
+# macOS-specific files
+.DS_Store
+
+# Ignore data directory
+data/

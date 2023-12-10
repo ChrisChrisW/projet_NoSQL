@@ -1,0 +1,212 @@
+<script>
+    function fetchAndRenderPlaylist() {
+        fetch('/get_all_mongo_data')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    renderPlaylist(data.data);
+                } else {
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function renderPlaylist(tracks) {
+            const playlistContainer = document.getElementsByClassName('playlistContainer')[0];
+
+            // Clear existing content in the playlist container
+            playlistContainer.innerHTML = '';
+
+            // Iterate through the tracks and create HTML elements for each
+            tracks.forEach(track => {
+                const trackItem = document.createElement('div');
+                trackItem.classList.add('trackItem');
+                trackItem.onclick = () => updatePlayer(track.uri);
+
+                const trackImage = document.createElement('img');
+                trackImage.classList.add('trackImage');
+                trackImage.src = track.image;
+                trackImage.alt = 'Track Image';
+
+                const trackInfos = document.createElement('div');
+                trackInfos.classList.add('trackInfos');
+
+                const trackName = document.createElement('div');
+                trackName.classList.add('trackName');
+                trackName.textContent = track.name;
+
+                const trackArtists = document.createElement('div');
+                trackArtists.classList.add('trackArtists');
+                trackArtists.textContent = track.artists;
+
+                const playButton = document.createElement('button');
+                playButton.classList.add('playButton');
+                playButton.textContent = 'Jouer';
+
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('deleteButton');
+                deleteButton.onclick = () => deleteTrack(track.uri);
+                deleteButton.textContent = 'Supprimer';
+
+                // Append elements to the trackItem
+                trackInfos.appendChild(trackName);
+                trackInfos.appendChild(trackArtists);
+                trackItem.appendChild(trackImage);
+                trackItem.appendChild(trackInfos);
+                trackItem.appendChild(playButton);
+                trackItem.appendChild(deleteButton);
+
+                // Append the trackItem to the playlist container
+                playlistContainer.appendChild(trackItem);
+            });
+        }
+
+
+    // Fetch and render the playlist when the page loads
+    window.onload = fetchAndRenderPlaylist;
+</script>
+
+<script>
+    function searchTrack() {
+        const clientId = "{{spotify_clientId}}";
+        const clientSecret = "{{spotify_clientSecret}}";
+        const tokenEndpoint = 'https://accounts.spotify.com/api/token';
+        const searchEndpoint = 'https://api.spotify.com/v1/search';
+
+        const searchInput = document.getElementById('searchInput').value;
+
+        // Obtenez l'access token comme précédemment
+
+        const requestBody = new URLSearchParams({
+            grant_type: 'client_credentials',
+            client_id: clientId,
+            client_secret: clientSecret
+        });
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: requestBody
+        };
+
+        // Effectuez la requête pour obtenir l'access token
+        fetch(tokenEndpoint, requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                const accessToken = new URLSearchParams(data).get('access_token');
+                console.log('Access Token:', accessToken);
+
+                // Effectuez la recherche de morceau
+                const searchApiEndpoint = `${searchEndpoint}?q=${encodeURIComponent(searchInput)}&type=track&limit=10`;
+
+                const searchRequestOptions = {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken
+                    },
+                    mode: 'cors',
+                    cache: 'default'
+                };
+
+                // Effectuez la requête à l'API Spotify pour rechercher un morceau
+                fetch(searchApiEndpoint, searchRequestOptions)
+                    .then(response => response.json())
+                    .then(data => {
+                        const trackListElement = document.getElementById('trackList');
+                        trackListElement.innerHTML = ''; // Effacez les résultats précédents
+                        
+                        // Display the search results modal
+                        document.getElementById('searchResults').style.display = 'block';
+                        
+                        // Affichez les résultats de la recherche (limité à 10)
+                        data.tracks.items.forEach(track => {
+                            const trackItemElement = document.createElement('li');
+                            trackItemElement.classList.add('trackItem');
+                            trackItemElement.innerHTML = `
+                                <img class="trackImage" src="${track.album.images.length > 0 ? track.album.images[0].url : 'placeholder-image-url'}" alt="Track Image">
+                                <div class="trackInfos">
+                                    <h3>${track.name}</h3>
+                                    <p>Artiste: ${track.artists.map(artist => artist.name).join(', ')}</p>
+                                </div>
+                                <button class="addButton" onclick="addTrack('${track.album.images[0].url}', '${track.name}', '${track.artists.map(artist => artist.name)}', '${track.uri}')">Ajouter</button>
+                            `;
+                            trackListElement.appendChild(trackItemElement);
+                        });
+                    })
+                    .catch(error => console.error('Erreur lors de la recherche de morceau:', error));
+            })
+            .catch(error => console.error('Erreur lors de la requête pour obtenir l\'access token:', error));
+    }
+
+    function addTrack(image, name, artists, uri) {
+        const options = {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'default',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({image, name, artists, uri})
+        };
+
+        // API submit
+        fetch("{{ url_for('submit_mongo') }}", options)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => fetchAndRenderPlaylist())
+            .catch(error => console.error('Erreur :', error));
+
+        updatePlayer(uri)
+        closeResults()
+    }
+
+    function closeResults() {
+        // Close the search results modal
+        const searchResults = document.getElementById('searchResults');
+        searchResults.style.display = 'none';
+
+    }
+
+    function updatePlayer(trackURI) {
+        // Remove the 'spotify:track:' prefix
+        const cleanTrackURI = trackURI.replace('spotify:track:', '');
+
+        // Get the iframe element
+        const playerIframe = document.getElementById('spotifyPlayer');
+
+        // Update the src attribute of the iframe with the clean track URI
+        playerIframe.src = `https://open.spotify.com/embed/track/${cleanTrackURI}`;
+    }
+    
+</script>
+
+
+<script>
+    function deleteTrack(trackURI) {
+        fetch("{{url_for('delete_mongo')}}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ spotify_uri: trackURI }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log(data.message);
+                // Fetch and render the updated playlist after deletion
+                fetchAndRenderPlaylist();
+            } else {
+                console.error('Error:', data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>

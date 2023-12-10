@@ -1,0 +1,224 @@
+<style>
+    .mongoDB-container {
+        position: relative;
+        font-family: 'Circular', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #111;
+        color: #fff;
+    }
+
+    header {
+        background-color: #111;
+        padding: 20px 40px;
+        text-align: center;
+    }
+
+    h1 {
+        margin: 0;
+        font-size: 24px;
+    }
+
+    #searchContainer {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    #searchInput {
+        padding: 10px;
+        max-width: 440px;
+        width: 100%;
+        border: none;
+        border-radius: 40px;
+        font-size: 16px;
+        margin-right: 10px;
+    }
+
+    #searchButton {
+        padding: 10px 20px;
+        background-color: #1DB954;
+        color: #fff;
+        border: none;
+        border-radius: 40px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #searchButton:hover {
+        background-color: #25CC66;
+    }
+
+    #playerContainer {
+        position: absolute;
+        width: 100%;
+        bottom: -10px;
+        left: 50%;
+        transform: translate(-50%, 0);
+        z-index: 100;
+    }
+
+    #spotifyPlayer {
+        width: 100%;
+        height: 80px; /* Ajustez cette valeur selon vos besoins */
+        margin: 0 auto;
+    }
+
+    #searchResults {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #222;
+        padding: 20px;
+        width: 80%;
+        max-width: 600px;
+        height: 300px;
+        z-index: 1000;
+        cursor: grab;
+        overflow: hidden;
+        border-radius: 10px;
+    }
+
+    .closeButton {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        color: #fff;
+    }
+
+    .closeButton:hover {
+        color: #1DB954;
+    }
+
+    .trackList {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+        overflow-y: auto;
+        height: inherit;
+    }
+
+    .trackItem {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #444;
+        border-radius: 5px;
+    }
+
+    .trackImage {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .trackInfos {
+        flex-grow: 1;
+        margin-right: 10px;
+    }
+
+    .addButton {
+        padding: 5px 10px;
+        background-color: #1DB954;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .addButton:hover {
+        background-color: #25CC66;
+    }
+
+    /* modifier */ 
+
+
+.playlistContainer {
+    background-color: rgb(255,255,255,0.03);
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 600px;
+    margin: 50px auto;
+    overflow-y: auto;
+    height: 250px;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.playlistContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.trackItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: #282828;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.trackItem:hover {
+    background-color: #333;
+}
+
+.trackImage {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.trackInfos {
+    flex-grow: 1;
+    margin-right: 15px;
+}
+
+.trackName {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.trackArtists {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.playButton {
+    padding: 8px 15px;
+    background-color: #1DB954;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.playButton:hover {
+    background-color: #25CC66;
+}
+
+.editButton, .deleteButton {
+        padding: 5px 10px;
+        margin-left: 10px;
+        background-color: #ff4d4d; /* Couleur rouge pour le bouton Supprimer */
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .editButton:hover, .deleteButton:hover {
+        background-color: #cc0000; /* Couleur rouge plus foncée au survol pour le bouton Supprimer */
+    }
+</style>
