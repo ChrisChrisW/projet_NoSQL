@@ -24,10 +24,12 @@ app.route('/submit_redis', methods=['POST'])(submit_redis)
 app.route('/edit_redis/<item_id>', methods=['GET', 'POST'])(edit_redis)
 app.route('/delete_redis/<item_id>', methods=['DELETE', 'POST'])(delete_redis)
 
-# Routes for Postgres
-app.route('/submit_postgres', methods=['POST'])(submit_postgres)
-app.route('/edit_postgres/<item_id>', methods=['GET', 'POST'])(edit_postgres)
-app.route('/delete_postgres/<item_id>', methods=['DELETE', 'POST'])(delete_postgres)
+# Routes for Postgres - Pokedex
+app.route('/get_all_pokemon', methods=['GET'])(get_all_pokemon)
+app.route('/update_pokemon_data', methods=['POST'])(update_pokemon_data)
+app.route('/add_pokemon', methods=['POST'])(add_pokemon)
+app.route('/update_pokemon/<pokemon_id>', methods=['PUT'])(update_pokemon)
+app.route('/delete_pokemon/<pokemon_id>', methods=['DELETE'])(delete_pokemon)
 
 # Routes for Neo4j
 app.route('/submit_neo4j', methods=['POST'])(submit_neo4j)

@@ -4,6 +4,7 @@
 
 {% block styles %}
 {% include "mongoDB/styles.html" %}
+{% include "postgres/styles.html" %}
 {% endblock %}
 
 
@@ -12,11 +13,13 @@
     <!-- MongoDB Card -->
     {% include "mongoDB/card.html" %}
 
+    <!-- Postgres Card -->
+    {% include "postgres/card.html" %}
+
     <!-- Redis Card -->
     {% include "redis/card.html" %}
 
-    <!-- Postgres Card -->
-    {% include "postgres/card.html" %}
+
 
     <!-- Neo4j Card -->
     {% include "neo4j/card.html" %}
@@ -28,5 +31,6 @@
 
 {% block javascript %}
 {% include "mongoDB/javascript.html" %}
+{% include "postgres/javascript.html" %}
 {% include "redis/javascript.html" %}
 {% endblock %}

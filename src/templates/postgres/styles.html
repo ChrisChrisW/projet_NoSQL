@@ -1,0 +1,222 @@
+<style>
+    .postgres-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #111;
+    }
+
+    .phone {
+        background-color: #fff;
+        border-radius: 20px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 350px;
+        max-width: 90%;
+    }
+
+    .pokedex-screen {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 10px;
+        padding: 20px;
+        overflow-x: auto; /* Enable horizontal scrolling */
+        white-space: nowrap; /* Prevent text from wrapping */
+    }
+
+    .pokemon-card {
+        background-color: #fff;
+        border: 2px solid #333;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        min-width: 160px;
+        transition: transform 0.3s ease-in-out;
+        cursor: pointer;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .pokemon-card:hover {
+        transform: scale(1.05);
+    }
+
+    .pokemon-card img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-bottom: 15px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .pokemon-card h2 {
+        margin-bottom: 10px;
+        font-size: 18px;
+        text-transform: capitalize; /* Capitalize the first letter */
+        color: #333;
+    }
+
+    .pokemon-card p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 10px;
+        white-space: normal;
+    }
+
+    .type-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 10px;
+        margin-right: 5px;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: capitalize; /* Capitalize the first letter */
+    }
+
+    footer {
+        background-color: #333;
+        color: #fff;
+        padding: 10px;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+
+    /* Background colors for Pokemon types */
+    .type-normal {
+        background-color: #A8A878;
+        color: #fff;
+    }
+
+    .type-fighting {
+        background-color: #C03028;
+        color: #fff;
+    }
+
+    .type-flying {
+        background-color: #A890F0;
+        color: #fff;
+    }
+
+    .type-poison {
+        background-color: #A040A0;
+        color: #fff;
+    }
+
+    .type-ground {
+        background-color: #E0C068;
+        color: #000;
+    }
+
+    .type-rock {
+        background-color: #B8A038;
+        color: #fff;
+    }
+
+    .type-bug {
+        background-color: #A8B820;
+        color: #fff;
+    }
+
+    .type-ghost {
+        background-color: #705898;
+        color: #fff;
+    }
+
+    .type-steel {
+        background-color: #B8B8D0;
+        color: #000;
+    }
+
+    .type-fire {
+        background-color: #F08030;
+        color: #fff;
+    }
+
+    .type-water {
+        background-color: #6890F0;
+        color: #fff;
+    }
+
+    .type-grass {
+        background-color: #78C850;
+        color: #fff;
+    }
+
+    .type-electric {
+        background-color: #F8D030;
+        color: #000;
+    }
+
+    .type-psychic {
+        background-color: #F85888;
+        color: #fff;
+    }
+
+    .type-ice {
+        background-color: #98D8D8;
+        color: #000;
+    }
+
+    .type-dragon {
+        background-color: #7038F8;
+        color: #fff;
+    }
+
+    .type-dark {
+        background-color: #705848;
+        color: #fff;
+    }
+
+    .type-fairy {
+        background-color: #EE99AC;
+        color: #000;
+    }
+</style>
+
+<style>
+
+.buttons-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    padding: 10px 0px 10px 0px;
+    text-align: center;
+}
+
+.postgres-container label {
+    color: #fff;
+    margin-right: 10px;
+}
+
+.postgres-container select {
+    padding: 5px;
+}
+
+.postgres-container button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 5px;
+    margin-right: 5px;
+}
+
+.postgres-container #addPokemonButton {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.postgres-container #removePokemonButton {
+    background-color: #FF0000; /* Red color for the Remove button */
+    color: white;
+}
+
+.postgres-container button:hover {
+    filter: brightness(0.8); /* Slight dim on hover */
+}
+</style>

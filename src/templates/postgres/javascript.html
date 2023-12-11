@@ -1,0 +1,224 @@
+<script>
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    function render() {
+        fetch('{{url_for("get_all_pokemon")}}')
+            .then(response => response.json())
+            .then(data => {
+                const pokemonList = data.data;
+                const pokedexScreen = document.getElementById('pokedex-screen');
+                // Clear existing content
+                pokedexScreen.innerHTML = '';
+
+                pokemonList.forEach(pokemon => {
+                    createPokemonCard(pokemon);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching Pokémon data:', error);
+            });
+
+        function createPokemonCard(pokemonData) {
+            const pokedexScreen = document.getElementById('pokedex-screen');
+
+            const pokemonCard = document.createElement('div');
+            pokemonCard.classList.add('pokemon-card');
+
+            const pokemonImage = document.createElement('img');
+            pokemonImage.src = pokemonData.image_url;
+            pokemonImage.alt = pokemonData.name;
+
+            const pokemonName = document.createElement('h2');
+            pokemonName.textContent = capitalizeFirstLetter(pokemonData.name);
+
+            const pokemonType = document.createElement('p');
+            const type1Badge = document.createElement('span');
+            type1Badge.classList.add('type-badge', `type-${pokemonData.type_1.toLowerCase()}`);
+            type1Badge.textContent = capitalizeFirstLetter(pokemonData.type_1);
+            pokemonType.appendChild(type1Badge);
+            if(pokemonData.type_2) {
+                const type2Badge = document.createElement('span');
+                type2Badge.classList.add('type-badge', `type-${pokemonData.type_2.toLowerCase()}`);
+                type2Badge.textContent = capitalizeFirstLetter(pokemonData.type_2);
+                pokemonType.appendChild(type2Badge);
+            }
+
+            const description = pokemonData.description;
+            const pokemonDescription = document.createElement('p');
+            pokemonDescription.textContent = `Description: ${description ? description : 'N/A'}`;
+
+            pokemonCard.appendChild(pokemonImage);
+            pokemonCard.appendChild(pokemonName);
+            pokemonCard.appendChild(pokemonType);
+            pokemonCard.appendChild(pokemonDescription);
+
+
+            const updateButton = document.createElement('button');
+            updateButton.textContent = 'Update';
+            updateButton.addEventListener('click', () => {
+                // Assuming you have a function to prompt the user for updated data
+                const updatedData = promptForUpdatedData(pokemonData);
+                if (updatedData) {
+                    updatePokemonCard(pokemonData.id, updatedData);
+                }
+            });
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', () => {
+                deletePokemonCard(pokemonData.id);
+            });
+            pokemonCard.appendChild(updateButton);
+            pokemonCard.appendChild(deleteButton);
+
+
+            pokedexScreen.appendChild(pokemonCard);
+        }
+    };
+
+
+    function selectRender() {
+        const pokemonSelect = document.getElementById('pokemonSelect');
+        pokemonSelect.innerHTML = "";
+        const addPokemonButton = document.getElementById('addPokemonButton');
+        fetch('{{url_for("get_all_pokemon")}}')
+            .then(response => response.json())
+            .then(databaseData => {
+                const addedPokemonList = databaseData.data;
+
+                fetch('https://pokeapi.co/api/v2/pokemon?limit=151')
+                    .then(response => response.json())
+                    .then(data => {
+                        const pokemonList = data.results;
+                        const addedPokemonNames = addedPokemonList.map(p => p.name);
+
+                        // Get the Pokémon objects for the names not in addedPokemonList
+                        const remainingPokemonObjects = pokemonList.filter(pokemon => !addedPokemonNames.includes(pokemon.name));
+
+                        remainingPokemonObjects.forEach(pokemon => {
+                            const option = document.createElement('option');
+                            option.value = pokemon.name;
+                            option.textContent = capitalizeFirstLetter(pokemon.name);
+                            pokemonSelect.appendChild(option);
+                        });
+                    })
+            .catch(error => {
+                console.error('Error fetching Pokémon data:', error);
+            });
+            })
+            .catch(error => {
+                console.error('Error fetching Pokémon data:', error);
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        selectRender();
+        render();
+    })
+
+    function addSelectedPokemon() {
+        const selectedPokemonName = document.getElementById('pokemonSelect').value;
+        if (selectedPokemonName) {
+            fetch(`https://pokeapi.co/api/v2/pokemon/${selectedPokemonName}`)
+                .then(response => response.json())
+                .then(pokemonData => {
+                    // Fetch species data to get flavor text
+                    fetch(pokemonData.species.url)
+                    .then(response => response.json())
+                    .then(pokemonSpecies => {
+                        addPokemonToBackend({
+                            id: pokemonData.id,
+                            name: pokemonData.name,
+                            description: getFlavorText(pokemonSpecies),
+                            type1: pokemonData.types[0].type.name,
+                            type2: pokemonData.types.length > 1 ? pokemonData.types[1].type.name : null,
+                            imageUrl: pokemonData.sprites.front_default,
+                        });
+
+                        selectRender();
+                        render();
+                    })
+                })
+                .catch(error => {
+                    console.error('Error fetching Pokémon data:', error);
+                });
+        }
+    }
+
+    function getFlavorText(pokemonSpecies) {
+        // Assuming English flavor text is used
+        const flavorTextEntry = pokemonSpecies.flavor_text_entries.find(entry => entry.language.name === "en");
+        const flavorText = flavorTextEntry ? flavorTextEntry.flavor_text : "Default flavor text"; // You can customize this
+        
+        // Remove excessive whitespace and line breaks
+        const cleanedFlavorText = flavorText.replace(/\s+/g, ' ').trim();
+        
+        return cleanedFlavorText;
+    }
+</script>
+
+<script>
+    function addPokemonToBackend(data) {
+        fetch('{{url_for("add_pokemon")}}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result);
+                render();
+            })
+            .catch(error => {
+                console.error('Error adding Pokémon:', error);
+            });
+    }
+</script>
+
+<script>
+    function updatePokemonCard(pokemonId, newData) {
+        fetch(`/update_pokemon/${pokemonId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newData),
+        })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result.message);
+                render();
+            })
+            .catch(error => {
+                console.error('Error updating Pokémon:', error);
+            });
+    }
+
+function deletePokemonCard(pokemonId) {
+    fetch(`/delete_pokemon/${pokemonId}`, {
+        method: 'DELETE',
+    })
+        .then(response => response.json())
+        .then(result => {
+            console.log(result.message);
+            selectRender();
+            render();
+        })
+        .catch(error => {
+            console.error('Error deleting Pokémon:', error);
+        });
+}
+
+function promptForUpdatedData(pokemonData) {
+    const name = prompt(`Enter new name for ${pokemonData.name}:`, pokemonData.name);
+    const description = prompt(`Enter new description for ${pokemonData.name}:`, pokemonData.description);
+    const type1 = prompt(`Enter new type 1 for ${pokemonData.name}:`, pokemonData.type_1);
+    const type2 = prompt(`Enter new type 2 for ${pokemonData.name}:`, pokemonData.type_2);
+    const imageUrl = prompt(`Enter new image URL for ${pokemonData.name}:`, pokemonData.image_url);
+
+    return { name, description, type1, type2, imageUrl };
+}
+</script>

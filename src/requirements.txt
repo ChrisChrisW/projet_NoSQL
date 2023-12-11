@@ -6,3 +6,5 @@ SQLAlchemy==1.4.22          # SQL toolkit and Object-Relational Mapping (ORM) fo
 psycopg2-binary==2.9.1      # PostgreSQL adapter for Python
 neo4j==4.3.2                # Python driver for Neo4j, a graph database
 elasticsearch==7.15.0       # Python client for Elasticsearch, a search and analytics engine
+
+requests==2.31.0
