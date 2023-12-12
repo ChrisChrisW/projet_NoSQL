@@ -1,5 +1,6 @@
 import redis
 import os
+import requests
 
 # Configuration RedisDB
 class RedisDB:
@@ -13,28 +14,45 @@ class RedisDB:
     def __init__(self):
         self.redis_client = redis.StrictRedis(host=self.redis_host, port=self.redis_port, decode_responses=True)
 
+    def add_api_data(self):
+        imgflip_api_url = 'https://api.imgflip.com/get_memes'
+        response = requests.get(imgflip_api_url)
+        data = response.json()
+
+        if data['success']:
+            memes = data['data']['memes']
+            for meme in memes:
+                meme_id = self.redis_client.incr('meme_id')
+                meme_key = f'meme:{meme_id}'
+                self.redis_client.hset(meme_key, 'name', meme['name'])
+                self.redis_client.hset(meme_key, 'url', meme['url'])
+
     def get_items(self):
         try:
-            return self.redis_client.hgetall('my_redis_data')
-            sorted_redis_data = dict(sorted(redis_data.items(), key=lambda x: int(x[0])))
-        except Exception as e:
-            print(f"Error during Redis operation: {e}")
-            return []
-    
-    def get_items_sorted(self):
-        try:
-            redis_data = self.redis_client.hgetall('my_redis_data')
-            return dict(sorted(redis_data.items(), key=lambda x: int(x[0])))
-        except Exception as e:
-            print(f"Error during Redis operation: {e}")
-            return []
-    
-    def get_item_by_id(self, item_id):
-        return self.redis_client.hget('my_redis_data', item_id)
+            meme_keys = self.redis_client.keys('meme:*')
+            memes = []
 
-    def create_items(self, data):
+            for key in meme_keys:
+                meme = self.redis_client.hgetall(key)
+                memes.append({'id': key.split(':')[-1], 'name': meme['name'], 'url': meme['url']})
+
+            return memes
+        except Exception as e:
+            print(f"Error during Redis operation: {e}")
+            return []
+
+    def create_items(self, meme_name, meme_url):
         try:
-            self.redis_client.hmset('my_redis_data', data)
+            if meme_name and meme_url:
+                meme_id = self.redis_client.incr('meme_id')
+                meme_key = f'meme:{meme_id}'
+
+                self.redis_client.hset(meme_key, 'name', meme_name)
+                self.redis_client.hset(meme_key, 'url', meme_url)
+
+                return {'success': True, 'meme_id': meme_id}
+            else:
+                return {'success': False, 'error': 'Missing data'}
         except Exception as e:
             print(f"Error creating Redis data: {e}")
 
@@ -59,14 +77,14 @@ class RedisDB:
 
         self.redis_client.hmset('my_redis_data', data) 
 
-    def edit_item(self, item_id, new_field):
-        updated_data = {
-            item_id : new_field
-        }
-        self.redis_client.hset('my_redis_data', mapping=updated_data)
+    def edit_item(self, meme_key, meme_name, meme_url):
+        if self.redis_client.exists(meme_key):
+            self.redis_client.hset(meme_key, 'name', meme_name)
+            self.redis_client.hset(meme_key, 'url', meme_url)
 
     def delete_items(self):
         self.redis_client.flushall()
 
-    def delete_item(self, item_id):
-        self.redis_client.hdel('my_redis_data', item_id)
+    def delete_item(self, meme_key):
+        if self.redis_client.exists(meme_key):
+            self.redis_client.delete(meme_key)

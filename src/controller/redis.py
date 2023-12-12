@@ -1,48 +1,46 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, jsonify
 from databases.redis import RedisDB
 
 # Création des instances de bd
 redis_db = RedisDB()
 
-def get_all_redis():
-    return redis_db.get_items_sorted()
+def add_memes_from_api():
+    try:
+        redis_db.add_api_data()
+        return jsonify({'success': True, 'message': 'Memes added from Imgflip API.'})
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return jsonify({'success': False, 'error': f'Failed to fetch memes from Imgflip API. {str(e)}'})
 
-def insert_redis():
-    default_redis_data = {
-        '0': '{"product_id": "P001", "name": "Laptop", "price": 1499.99}',
-        '1': '{"product_id": "P002", "name": "Smartphone", "price": 799.99}',
-        '2': '{"product_id": "P003", "name": "Headphones", "price": 129.99}',
-        '3': '{"name": "Tablet", "price": 499.99, "brand": "Apple"}',
-        '4': '{"name": "Desktop", "price": 1999.99, "brand": "HP"}',
-        '5': '{"name": "Camera", "price": 599.99, "brand": "Canon"}',
-        '6': '{"name": "Smartphone", "price": 399.99, "brand": "Samsung"}',
-        '7': '{"name": "Laptop", "price": 899.99, "brand": "Dell"}',
-        '8': '{"name": "Headphones", "price": 79.99, "brand": "Sony"}',
-    }
-    redis_db.create_items(default_redis_data)
+def get_memes():
+    return jsonify(redis_db.get_items())
 
-def submit_redis():
-    form = request.form
-    redis_db.create_item(form)
+def add_meme():
+    try:
+        meme_name = request.form.get('memeName')
+        meme_url = request.form.get('memeURL')
+        redis_db.create_items(meme_name, meme_url)
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': 'Meme not found'})
 
-    return redirect(url_for('index'))
+def edit_meme(meme_id):
+    try:
+        meme_key = f'meme:{meme_id}'
+        meme_name = request.form.get('memeName')
+        meme_url = request.form.get('memeURL')
+        redis_db.edit_item(meme_key, meme_name, meme_url)
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': 'Meme not found'})
 
-def edit_redis(item_id):
-    if request.method == 'POST':
-        if request.form.get('_method') == 'PUT':
-            new_field = request.form['field']
-            redis_db.edit_item(item_id, new_field)
-            return redirect(url_for('index'))
-
-    item = redis_db.get_item_by_id(item_id)
-    return render_template('redis/edit.html', field=item_id, item=item)
-
-def delete_redis(item_id):
-    if request.form.get('_method') == 'DELETE':
-        if 'delete_redis' in request.form:
-            redis_db.delete_item(item_id)
-
-    return redirect(url_for('index'))
+def delete_meme(meme_id):
+    try:
+        meme_key = f'meme:{meme_id}'
+        redis_db.delete_item(meme_key)
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': 'Meme not found'})
 
 def delete_all_redis():
     redis_db.delete_items()

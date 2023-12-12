@@ -48,7 +48,7 @@ class PostgresDB:
                 name = pokemon_data['name']
                 type_1 = pokemon_data['types'][0]['type']['name']
                 type_2 = pokemon_data['types'][1]['type']['name'] if len(pokemon_data['types']) > 1 else None
-                flavor_text_entry = species_data['flavor_text_entries'][0]['flavor_text'] if species_data['flavor_text_entries'] else None
+                flavor_text_entry = next((entry['flavor_text'] for entry in species_data['flavor_text_entries'] if entry['language']['name'] == 'en'), None)
                 image_url = pokemon_data['sprites']['front_default']
                 
                 # Clean up flavor text

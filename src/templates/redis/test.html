@@ -1,0 +1,25 @@
+
+<div id="memeContainer">
+    <div id="overlay"></div>
+
+    <div id="memeForm">
+        <button id="closeButton" onclick="toggleForm()">X</button>
+        <h2 style="margin-top: 0;">Meme Generator</h2>
+        <form>
+            <label for="memeName">Meme Name:</label>
+            <input type="text" id="memeName" name="memeName" required style="width: 100%; padding: 8px; box-sizing: border-box; margin-bottom: 10px;"><br>
+
+            <label for="memeURL">Meme URL:</label>
+            <input type="url" id="memeURL" name="memeURL" required style="width: 100%; padding: 8px; box-sizing: border-box; margin-bottom: 10px;"><br>
+
+            <input type="submit" value="Generate Meme" style="background-color: #3498db; color: #fff; border: none; padding: 10px; cursor: pointer; border-radius: 4px; font-size: 14px;">
+        </form>
+    </div>
+
+    <div id="memeListContainer">
+        <ul id="memeList"></ul>
+    </div>
+
+    <button id="memeButton" onclick="toggleForm()">Create Meme</button>
+</div>
+

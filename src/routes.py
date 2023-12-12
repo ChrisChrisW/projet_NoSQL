@@ -17,16 +17,18 @@ app.route('/', methods=['GET'])(index)
 # Routes for MongoDB - Spotify Playlist
 app.route('/get_all_mongo_data', methods=['GET'])(get_all_mongo_data)
 app.route('/submit_mongo', methods=['POST'])(submit_mongo)
-app.route('/delete_mongo', methods=['DELETE', 'POST'])(delete_mongo)
+app.route('/delete_mongo', methods=['DELETE'])(delete_mongo)
 
-# Routes for Redis
-app.route('/submit_redis', methods=['POST'])(submit_redis)
-app.route('/edit_redis/<item_id>', methods=['GET', 'POST'])(edit_redis)
-app.route('/delete_redis/<item_id>', methods=['DELETE', 'POST'])(delete_redis)
+# Routes for Redis - Meme
+app.route('/add_memes_from_api', methods=['POST'])(add_memes_from_api)
+app.route('/get_memes', methods=['GET'])(get_memes)
+app.route('/add_meme', methods=['POST'])(add_meme)
+app.route('/edit_meme/<meme_id>', methods=['PUT'])(edit_meme)
+app.route('/delete_meme/<meme_id>', methods=['DELETE'])(delete_meme)
 
 # Routes for Postgres - Pokedex
-app.route('/get_all_pokemon', methods=['GET'])(get_all_pokemon)
 app.route('/update_pokemon_data', methods=['POST'])(update_pokemon_data)
+app.route('/get_all_pokemon', methods=['GET'])(get_all_pokemon)
 app.route('/add_pokemon', methods=['POST'])(add_pokemon)
 app.route('/update_pokemon/<pokemon_id>', methods=['PUT'])(update_pokemon)
 app.route('/delete_pokemon/<pokemon_id>', methods=['DELETE'])(delete_pokemon)

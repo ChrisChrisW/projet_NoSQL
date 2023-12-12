@@ -1,56 +1,101 @@
 <script>
-    var fieldCounter = 0;
-
-    function addField() {
-        var form = document.getElementById("redisForm");
-        var counter = fieldCounter++;
-
-        var div = document.createElement("div");
-        div.className = "form-group";
-
-        var label = document.createElement("label");
-        label.innerHTML = "Field " + counter + ":";
-
-        var input = document.createElement("input");
-        input.type = "text";
-        input.name = counter;
-        input.className = "form-control";
-        input.required = true;
-
-        var inputGroup = document.createElement("div");
-        inputGroup.className = "d-flex";
-
-        inputGroup.appendChild(input);
-
-        var removeButton = document.createElement("button");
-        removeButton.type = "button";
-        removeButton.className = "btn btn-danger btn-sm ml-2";
-        removeButton.innerHTML = "Remove";
-        removeButton.onclick = function() { removeField(div); };
-
-        inputGroup.appendChild(removeButton);
-
-        div.appendChild(label);
-        div.appendChild(inputGroup);
-
-        form.insertBefore(div, form.lastChild.previousSibling);
+    function toggleForm() {
+        var form = document.getElementById('memeForm');
+        var overlay = document.getElementById('overlay');
+        form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
+        overlay.style.display = (overlay.style.display === 'none' || overlay.style.display === '') ? 'block' : 'none';
     }
+</script>
 
-    function removeField(field) {
-        var form = document.getElementById("redisForm");
-        form.removeChild(field);
-        updateFieldNames();
-    }
+<script>
+document.querySelector('form').addEventListener('submit', function (e) {
+    e.preventDefault();
 
-    function updateFieldNames() {
-        var form = document.getElementById("redisForm");
-        var inputs = form.getElementsByTagName("input");
+    var memeName = document.getElementById('memeName').value;
+    var memeURL = document.getElementById('memeURL').value;
 
-        for (var i = 0; i < inputs.length; i++) {
-            var currentField = inputs[i];
-            if (currentField.type === "text") {
-                currentField.name = "field_" + i;
+    if (memeName && memeURL) {
+        fetch('/add_meme', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'memeName': memeName,
+                'memeURL': memeURL,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                addMemeToList(memeName, memeURL, data.meme_id);
+                toggleForm();
+            } else {
+                alert('Failed to add meme. Please try again.');
             }
+        });
+    }
+});
+
+function getMemes() {
+    fetch('/get_memes')
+        .then(response => response.json())
+        .then(data => {
+            var memeList = document.getElementById('memeList');
+            memeList.innerHTML = "";
+
+            data.forEach(meme => {
+                addMemeToList(meme.name, meme.url, meme.id);
+            });
+        });
+}
+
+function addMemeToList(name, url, id) {
+    var memeList = document.getElementById('memeList');
+    var listItem = document.createElement('li');
+    listItem.className = 'memeItem';
+    listItem.innerHTML = `<h3>${name}</h3><a href="${url}" target="_blank"><img src="${url}" alt="${name}"></a><button class="delete" onclick="deleteMeme(${id})">Delete</button><button class="edit" onclick="editMeme(${id})">Edit</button>`;
+    memeList.appendChild(listItem);
+}
+
+// Fetch memes when the page loads
+getMemes();
+</script>
+
+<script>
+    function editMeme(id) {
+        var memeName = prompt('Enter new name:');
+        var memeURL = prompt('Enter new URL:');
+
+        if (memeName !== null && memeURL !== null) {
+            fetch(`/edit_meme/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'memeName': memeName,
+                    'memeURL': memeURL,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    getMemes();
+                }
+            });
         }
+    }
+    
+    function deleteMeme(id) {
+        fetch(`/delete_meme/${id}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                getMemes();
+            } 
+        });
     }
 </script>
