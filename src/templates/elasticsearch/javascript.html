@@ -1,0 +1,124 @@
+<script>
+
+function getMessages() {
+    // Récupérez les messages depuis le serveur Flask
+    fetch('{{url_for("get_messages")}}')
+        .then(response => response.json())
+        .then(data => {
+            var chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = '';
+
+            data.messages.reverse().map(message => {
+                var newMessage = document.createElement('div');
+                    newMessage.className = 'message';
+
+                    if (message.username === "You") {
+                        newMessage.classList.add('user-message');
+                    } else {
+                        newMessage.classList.add('other-message');
+                    }
+
+                    var usernameElement = document.createElement('div');
+                    usernameElement.className = 'username';
+                    usernameElement.textContent = message.username;
+                    newMessage.appendChild(usernameElement);
+
+                    var messageContent = document.createElement('div');
+                    messageContent.className = 'message-content';
+                    messageContent.textContent = message.message;
+                    newMessage.appendChild(messageContent);
+
+                    var messageMeta = document.createElement('div');
+                    messageMeta.className = 'message-meta';
+
+                    var deleteButton = document.createElement('span');
+                    deleteButton.className = 'delete-button';
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.onclick = () => {
+                        deleteMessage(newMessage, message.message, message.timestamp);
+                    };
+
+                    var messageTime = document.createElement('div');
+                    var currentTime = new Date(message.timestamp);
+                    var hours = currentTime.getHours();
+                    var minutes = currentTime.getMinutes();
+                    messageTime.textContent = hours + ':' + (minutes < 10 ? '0' + minutes : minutes);
+
+                    messageMeta.appendChild(messageTime);
+                    messageMeta.appendChild(deleteButton);
+
+                    newMessage.appendChild(messageMeta);
+
+                    chatMessages.appendChild(newMessage);
+            });
+
+        // Scroll vers le bas pour afficher le dernier message
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+}
+
+    // Chargez les messages au démarrage
+    getMessages();
+
+    // Rafraîchissez les messages toutes les quelques secondes (facultatif)
+    // TODO : setInterval(getMessages, 5000);
+</script>
+
+<script>
+    function sendMessage() {
+        var usernameSelect = document.getElementById('username-select');
+        var messageInput = document.getElementById('message-input');
+
+        var username = usernameSelect.value.trim();
+        var messageText = messageInput.value.trim();
+
+        if (username !== '' && messageText !== '') {
+            // Envoyez le message au serveur Flask
+            fetch('{{url_for("send_message")}}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    message: messageText,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                setTimeout(() => getMessages(), 1000);
+            });
+
+            // Effacez le champ de saisie après l'envoi
+            messageInput.value = '';
+        }
+    }
+</script>
+
+<script>
+function deleteMessage(messageElement, messageContent, messageTimestamp) {
+    fetch('{{url_for("delete_message")}}', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            content: messageContent,
+            timestamp: messageTimestamp,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'OK') {
+            // If deletion on the server was successful, mark the message as deleted on the frontend
+            messageElement.classList.add('deleted-message');
+            messageElement.querySelector('.message-content').textContent = 'This message has been deleted';
+            // Remove the delete button
+            messageElement.querySelector('.delete-button').remove();
+        } else {
+            console.error('Error deleting message:', data.error_message);
+        }
+    });
+}
+</script>

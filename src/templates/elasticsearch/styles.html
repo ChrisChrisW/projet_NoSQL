@@ -1,0 +1,123 @@
+<style>
+    .chat-container {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #e8e8e8;
+        height: 100vh;
+    }
+
+    #chat-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #chat-messages {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        overflow-y: auto;
+    }
+
+    .message {
+        margin-bottom: 8px;
+        padding: 8px;
+        border-radius: 12px;
+        max-width: 70%;
+        min-width: 282px;
+        word-wrap: break-word;
+        position: relative;
+    }
+
+    .user-message {
+        background-color: #00a1f1;
+        color: #fff;
+        text-align: right;
+        align-self: flex-end;
+    }
+
+    .other-message {
+        background-color: #fff;
+        color: #333;
+        text-align: left;
+        align-self: flex-start;
+    }
+
+    .deleted-message {
+        background-color: #ff6b6b;
+        color: #fff;
+    }
+
+    .message-content {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    .message-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #888;
+        font-size: 0.8em;
+        margin-top: 4px;
+    }
+
+    .username {
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+
+    .delete-button {
+        cursor: pointer;
+        color: red;
+        font-weight: bold;
+        margin-left: 8px;
+    }
+
+    #user-input {
+        display: flex;
+        padding: 10px;
+        background-color: #fff;
+        border-top: 1px solid #ddd;
+    }
+
+    #username-select {
+        flex: 1;
+        padding: 8px;
+        margin-right: 8px;
+        border: none;
+        border-radius: 8px;
+        background-color: #f5f5f5;
+    }
+
+    #message-input {
+        flex: 2;
+        padding: 8px;
+        margin-right: 8px;
+        border: none;
+        border-radius: 8px;
+        background-color: #f5f5f5;
+    }
+
+    #send-button {
+        flex: 0.5;
+        padding: 8px;
+        background-color: #00a1f1;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    /* Ajustement de la couleur pour le message de You et les messages supprimés */
+    .user-message .message-meta,
+    .deleted-message .message-meta {
+        color: #ddd;
+    }
+</style>

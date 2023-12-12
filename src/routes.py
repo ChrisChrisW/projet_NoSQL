@@ -38,10 +38,10 @@ app.route('/submit_neo4j', methods=['POST'])(submit_neo4j)
 app.route('/edit_neo4j/<item_id>', methods=['GET', 'POST'])(edit_neo4j)
 app.route('/delete_neo4j/<item_id>', methods=['DELETE', 'POST'])(delete_neo4j)
 
-# Routes for Elasticsearch
-app.route('/submit_elasticsearch', methods=['POST'])(submit_elasticsearch)
-app.route('/edit_elasticsearch/<item_id>', methods=['GET', 'POST'])(edit_elasticsearch)
-app.route('/delete_elasticsearch/<item_id>', methods=['DELETE', 'POST'])(delete_elasticsearch)
+# Routes for Elasticsearch - Chatbox
+app.route('/get_messages', methods=['GET'])(get_messages)
+app.route('/send_message', methods=['POST'])(send_message)
+app.route('/delete_message', methods=['DELETE'])(delete_message)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

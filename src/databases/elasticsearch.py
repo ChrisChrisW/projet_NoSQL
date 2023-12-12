@@ -1,12 +1,14 @@
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 import os
+from datetime import datetime
 
 # Configuration Elasticsearch
 class ElasticsearchDB:
     # Charge les variables d'environnement
     elasticsearch_host = os.getenv('ELASTICSEARCH_HOST')
     elasticsearch_index = os.getenv('ELASTICSEARCH_INDEX')
+    index = "chat"
     if not elasticsearch_host or not elasticsearch_index:
         raise ValueError("ELASTICSEARCH_HOST or ELASTICSEARCH_INDEX environment variables are not set.")
 
@@ -18,36 +20,66 @@ class ElasticsearchDB:
             # Créer l'index avec une configuration minimale
             self.es.indices.create(index=self.elasticsearch_index)
 
-    def get_items(self):
+    def create_message(self, data):
         try:
-            return self.es.search(index=self.elasticsearch_index, body={'query': {'match_all': {}}})
-        except NotFoundError as e:
-            print(f"Error during Elasticsearch operation: {e}")
-            return []
-    
-    def get_item_by_id(self, item_id):
-        return self.es.get(index=self.elasticsearch_index, id=item_id)
+            username = data['username']
+            message_text = data['message']
 
-    def create_items(self, data):
+            # Enregistrez le message dans Elasticsearch avec un horodatage
+            self.es.index(index=self.index, body={
+                'username': username,
+                'message': message_text,
+                'timestamp': datetime.now()
+            })
+
+            return {'status': 'OK'}
+
+        except Exception as e:
+            return {'status': 'Error', 'error_message': str(e)}
+
+    def get_messages(self):
         try:
-            for item in data:   
-                self.es.index(index=self.elasticsearch_index, body=item)
-        except NotFoundError as e:
-            print(f"Error during Elasticsearch operation: {e}")
+            # Récupérez les messages depuis Elasticsearch (limité aux 50 derniers)
+            result = self.es.search(index=self.index, body={
+                'query': {'match_all': {}},
+                'size': 50,
+                'sort': [{'timestamp': 'desc'}]
+            })
 
-    def create_item(self, field1, field2):
-        data = {'field1': field1, 'field2': field2}
-        self.es.index(index=self.elasticsearch_index, body=data)
+            messages = [{'username': hit['_source']['username'],
+                        'message': hit['_source']['message'],
+                        'timestamp': hit['_source']['timestamp']}
+                        for hit in result['hits']['hits']]
 
-    def edit_item(self, item_id, new_field1, new_field2):
-        updated_data = {
-            'field1': new_field1,
-            'field2': new_field2
-        }
-        self.es.update(index=self.elasticsearch_index, id=item_id, body={'doc': updated_data})
+            return {'status': 'OK', 'messages': messages}
+        except Exception as e:
+            return {'status': 'Error', 'error_message': str(e)}
+        
+    def delete(self, content, timestamp):
+        try:
+            # Search for the message based on content and timestamp
+            result = self.es.search(index=self.index, body={
+                'query': {
+                    'bool': {
+                        'must': [
+                            {'match': {'message': content}},
+                            {'match': {'timestamp': timestamp}}
+                        ]
+                    }
+                },
+                'size': 1  # Assuming unique combination, limit to 1 result
+            })
+
+            if result['hits']['hits']:
+                message_id = result['hits']['hits'][0]['_id']
+                # Perform the deletion in Elasticsearch
+                self.es.delete(index='chat', id=message_id)
+                return {'status': 'OK'}
+            else:
+                return {'status': 'Error', 'error_message': 'Message not found'}
+
+        except Exception as e:
+            return {'status': 'Error', 'error_message': str(e)}
 
     def delete_items(self):
         self.es.indices.delete(index=self.elasticsearch_index, ignore=[400, 404])
-
-    def delete_item(self, item_id):
-        self.es.delete(index=self.elasticsearch_index, id=item_id)
