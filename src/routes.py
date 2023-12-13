@@ -34,9 +34,11 @@ app.route('/update_pokemon/<pokemon_id>', methods=['PUT'])(update_pokemon)
 app.route('/delete_pokemon/<pokemon_id>', methods=['DELETE'])(delete_pokemon)
 
 # Routes for Neo4j
-app.route('/submit_neo4j', methods=['POST'])(submit_neo4j)
-app.route('/edit_neo4j/<item_id>', methods=['GET', 'POST'])(edit_neo4j)
-app.route('/delete_neo4j/<item_id>', methods=['DELETE', 'POST'])(delete_neo4j)
+app.route('/chat', methods=['POST'])(chat)
+
+# app.route('/submit_neo4j', methods=['POST'])(submit_neo4j)
+# app.route('/edit_neo4j/<item_id>', methods=['GET', 'POST'])(edit_neo4j)
+# app.route('/delete_neo4j/<item_id>', methods=['DELETE', 'POST'])(delete_neo4j)
 
 # Routes for Elasticsearch - Chatbox
 app.route('/get_messages', methods=['GET'])(get_messages)

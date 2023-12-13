@@ -1,0 +1,37 @@
+<script>
+    function appendMessage(message, className) {
+        const chatMessages = document.querySelector('.chat-ai-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `messageAI ${className}`;
+        messageDiv.textContent = message;
+        chatMessages.appendChild(messageDiv);
+    }
+
+    function sendMessageAI() {
+        const userMessage = document.querySelector('.user-messageAI').value;
+        if (!userMessage || userMessage.trim() === '') return;
+
+        appendMessage(`User: ${userMessage}`, 'user-messageAI');
+
+        fetch('/chat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user_message: userMessage }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("dddd")
+            console.log(data)
+            const aiMessage = data.ai_message;
+            appendMessage(`AI: ${aiMessage}`, 'ai-message');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            appendMessage('Error occurred. Please try again.', 'ai-message');
+        });
+
+        document.querySelector('.user-messageAI').value = ''; // Clear input field
+    }
+</script>

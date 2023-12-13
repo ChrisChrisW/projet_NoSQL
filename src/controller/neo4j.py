@@ -1,8 +1,36 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, jsonify
 from databases.neo4j import Neo4jDB
+from chatbot import Chat, register_call
+
 
 # Création des instances de bd
 neo4j_db = Neo4jDB()
+
+# Define a function to handle greetings
+@register_call("hello")
+def say_hello():
+    return "Hello! How can I assist you today?"
+
+history = []
+
+def chat():
+    try:
+        data = request.json
+        user_message = data['user_message']
+
+        # Process the context with the chatbot
+        first_question = "Hi, how are you?"
+        chatbot = Chat()
+        response = chatbot.converse(first_question)
+
+        answer = str(response)
+        # Save response in a database
+        history.append((user_message, answer))
+
+        return jsonify({'ai_message': answer})
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 def get_all_neo4j():
     return neo4j_db.get_items()

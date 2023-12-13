@@ -5,11 +5,12 @@ function getMessages() {
     fetch('{{url_for("get_messages")}}')
         .then(response => response.json())
         .then(data => {
-            var chatMessages = document.getElementById('chat-messages');
-            chatMessages.innerHTML = '';
+            if(data.status == "OK") {
+                var chatMessages = document.getElementById('chat-messages');
+                chatMessages.innerHTML = '';
 
-            data.messages.reverse().map(message => {
-                var newMessage = document.createElement('div');
+                data.messages.reverse().map(message => {
+                    var newMessage = document.createElement('div');
                     newMessage.className = 'message';
 
                     if (message.username === "You") {
@@ -50,10 +51,11 @@ function getMessages() {
                     newMessage.appendChild(messageMeta);
 
                     chatMessages.appendChild(newMessage);
-            });
-
-        // Scroll vers le bas pour afficher le dernier message
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+                });
+                
+                // Scroll vers le bas pour afficher le dernier message
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
     });
 }
 

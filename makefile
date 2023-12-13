@@ -7,7 +7,8 @@ MONGO_CONTAINER_NAME := $(IMAGE_NAME)_mongodb
 API_URL = http://localhost:5000
 
 insert_data:
-	curl -X POST $(API_URL)/insert_default_values
+	curl -X POST $(API_URL)/add_memes_from_api
+	curl -X POST $(API_URL)/update_pokemon_data
 
 delete_data:
 	curl -X DELETE $(API_URL)/delete_all_data
