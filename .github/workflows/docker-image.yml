@@ -2,9 +2,8 @@ name: Deploy with Docker Compose
 
 on:
   push:
-    branches: [ $default-branch ]
-  pull_request:
-    branches: [ $default-branch ]
+    branches:
+      - main
 
 jobs:
   deploy:
