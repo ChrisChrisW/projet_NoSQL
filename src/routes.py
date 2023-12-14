@@ -84,6 +84,6 @@ def route_generators():
 
 if __name__ == '__main__':
     # Geler l'application avant de l'exécuter
-    freezer.freeze(defaults={'freeze_outdir': 'docs'})  # Spécifie le dossier de sortie
+    freezer.freeze('')    
     # Exécuter l'application Flask
     app.run(host='0.0.0.0', port=5000, debug=True)
