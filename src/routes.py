@@ -1,5 +1,3 @@
-from flask_frozen import Freezer
-
 from flask import Flask
 
 from controller.main import *
@@ -10,7 +8,6 @@ from controller.neo4j import *
 from controller.elasticsearch import *
 
 app = Flask(__name__)
-freezer = Freezer(app, with_no_argument_rules=False)  # Désactive les règles d'argument vides par défaut
 
 # Routes for main
 app.route('/insert_default_values', methods=['POST'])(insert_default_values)
@@ -83,7 +80,4 @@ def route_generators():
     yield 'delete_message', {}
 
 if __name__ == '__main__':
-    # Geler l'application avant de l'exécuter
-    freezer.freeze('')    
-    # Exécuter l'application Flask
     app.run(host='0.0.0.0', port=5000, debug=True)
