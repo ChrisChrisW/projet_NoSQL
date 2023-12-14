@@ -5,7 +5,6 @@ from controller.mongo import *
 from controller.redis import *
 from controller.postgres import *
 from controller.neo4j import *
-from controller.elasticsearch import *
 
 app = Flask(__name__)
 
@@ -39,11 +38,6 @@ app.route('/chat', methods=['POST'])(chat)
 # app.route('/submit_neo4j', methods=['POST'])(submit_neo4j)
 # app.route('/edit_neo4j/<item_id>', methods=['GET', 'POST'])(edit_neo4j)
 # app.route('/delete_neo4j/<item_id>', methods=['DELETE', 'POST'])(delete_neo4j)
-
-# Routes for Elasticsearch - Chatbox
-app.route('/get_messages', methods=['GET'])(get_messages)
-app.route('/send_message', methods=['POST'])(send_message)
-app.route('/delete_message', methods=['DELETE'])(delete_message)
 
 if __name__ == '__main__':
     # Exécuter l'application Flask
