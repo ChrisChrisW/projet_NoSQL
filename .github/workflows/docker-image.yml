@@ -2,8 +2,9 @@ name: Deploy with Docker Compose
 
 on:
   push:
-    branches:
-      - main
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
 
 jobs:
   deploy:
@@ -11,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Docker Compose
         run: |
