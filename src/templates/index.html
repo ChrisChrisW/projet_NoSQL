@@ -7,7 +7,6 @@
 {% include "postgres/styles.html" %}
 {% include "redis/styles.html" %}
 {% include "elasticsearch/styles.html" %}
-{% include "neo4j/styles.html" %}
 {% endblock %}
 
 
@@ -25,8 +24,6 @@
     <!-- Elasticsearch Card --> 
     {% include "elasticsearch/card.html" %}
 
-    <!-- Neo4j Card -->
-    {% include "neo4j/card.html" %}
 </div>
 {% endblock %}
 
@@ -35,5 +32,4 @@
 {% include "postgres/javascript.html" %}
 {% include "redis/javascript.html" %}
 {% include "elasticsearch/javascript.html" %}
-{% include "neo4j/javascript.html" %}
 {% endblock %}

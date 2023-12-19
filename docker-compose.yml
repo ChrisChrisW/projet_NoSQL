@@ -11,7 +11,7 @@ services:
       - mongodb
       - redis
       - postgres
-      - neo4j
+      # - neo4j
       - elasticsearch
     restart: always
     env_file:
@@ -45,14 +45,14 @@ services:
     volumes:
       - ./data/postgres:/data/postgres
 
-  neo4j:
-    image: neo4j:latest
-    ports:
-      - "${NEO4J_PORT:-7687}:7687"
-    environment:
-      - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASSWORD}
-    volumes:
-      - ./data/neo4j:/data/neo4j
+  # neo4j:
+  #   image: neo4j:latest
+  #   ports:
+  #     - "${NEO4J_PORT:-7687}:7687"
+  #   environment:
+  #     - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASSWORD}
+  #   volumes:
+  #     - ./data/neo4j:/data/neo4j
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
