@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for
 import os
 
-from controller.mongo import delete_all_mongo
+# from controller.mongo import delete_all_mongo
 from controller.redis import delete_all_redis
 from controller.elasticsearch import delete_all_elasticsearch
 
@@ -9,7 +9,7 @@ def insert_default_values():
     return redirect(url_for('index'))
 
 def delete_all_data():
-    delete_all_mongo()
+    # delete_all_mongo()
     delete_all_redis()
     delete_all_elasticsearch()
 
