@@ -9,10 +9,10 @@ services:
       - "${WEB_PORT:-8080}:8080"  # Use the WEB_PORT environment variable or default to 8080
     depends_on:
       - mongodb
-      - redis
+      # - redis
       - postgres
       # - neo4j
-      - elasticsearch
+      # - elasticsearch
     restart: always
     env_file:
       - .env  # Load environment variables from the .env file
@@ -27,12 +27,12 @@ services:
     volumes:
       - ./data/mongodb:/data/mongodb
 
-  redis:
-    image: redis:latest
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
-    volumes:
-      - ./data/redis:/data/redis
+  # redis:
+  #   image: redis:latest
+  #   ports:
+  #     - "${REDIS_PORT:-6379}:6379"
+  #   volumes:
+  #     - ./data/redis:/data/redis
 
   postgres:
     image: postgres:13
@@ -54,11 +54,11 @@ services:
   #   volumes:
   #     - ./data/neo4j:/data/neo4j
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
-    environment:
-      - discovery.type=single-node
-    ports:
-      - "${ELASTICSEARCH_PORT:-9200}:9200"
-    volumes:
-      - ./data/elasticsearch:/data/elasticsearch
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+  #   environment:
+  #     - discovery.type=single-node
+  #   ports:
+  #     - "${ELASTICSEARCH_PORT:-9200}:9200"
+  #   volumes:
+  #     - ./data/elasticsearch:/data/elasticsearch

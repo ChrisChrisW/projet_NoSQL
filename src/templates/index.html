@@ -5,8 +5,6 @@
 {% block styles %}
 {% include "mongoDB/styles.html" %}
 {% include "postgres/styles.html" %}
-{% include "redis/styles.html" %}
-{% include "elasticsearch/styles.html" %}
 {% endblock %}
 
 
@@ -18,18 +16,10 @@
     <!-- Postgres Card -->
     {% include "postgres/card.html" %}
 
-    <!-- Redis Card -->
-    {% include "redis/card.html" %}
-
-    <!-- Elasticsearch Card --> 
-    {% include "elasticsearch/card.html" %}
-
 </div>
 {% endblock %}
 
 {% block javascript %}
 {% include "mongoDB/javascript.html" %}
 {% include "postgres/javascript.html" %}
-{% include "redis/javascript.html" %}
-{% include "elasticsearch/javascript.html" %}
 {% endblock %}
